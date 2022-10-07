@@ -23,8 +23,8 @@ public class RedisConfig {
     @Value("${spring.redis.database}")
     private int redisDatabase;
 
-//    @Value("${spring.redis.username}")
-//    private String redisUsername;
+    @Value("${spring.redis.username}")
+    private String redisUsername;
 
     @Value("${REDIS_PASSWORD}")
     private String redisPassword;
@@ -36,7 +36,7 @@ public class RedisConfig {
         redisConfig.setHostName(redisHost);
         redisConfig.setPort(redisPort);
         redisConfig.setDatabase(redisDatabase);
-//        redisConfig.setUsername(redisUsername);
+        redisConfig.setUsername(redisUsername);
         redisConfig.setPassword(redisPassword);
 
         // Create an instance of the Jedis Driver
