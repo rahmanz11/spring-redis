@@ -4,21 +4,55 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import redis.clients.jedis.BinaryJedis;
+import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
+import org.springframework.data.redis.connection.jedis.JedisClientConfiguration;
+import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 @Configuration
 @ComponentScan("com.demo.redisoperation")
 public class RedisConfig {
 
     @Value("${spring.redis.host}")
-    private String HOST;
+    private String redisHost;
 
     @Value("${spring.redis.port}")
-    private String PORT;
+    private Integer redisPort;
 
-    @Bean
-    public synchronized BinaryJedis jedisInstance() {
-        BinaryJedis jedis = new BinaryJedis(HOST, Integer.parseInt(PORT));
-        return jedis;
+    @Value("${spring.redis.database}")
+    private int redisDatabase;
+
+//    @Value("${spring.redis.username}")
+//    private String redisUsername;
+
+    @Value("${REDIS_PASSWORD}")
+    private String redisPassword;
+
+    @Bean("redislab")
+    public RedisTemplate<String, String> iniRedisTemplate(){
+        // Configure the Redis databse
+        RedisStandaloneConfiguration redisConfig = new RedisStandaloneConfiguration();
+        redisConfig.setHostName(redisHost);
+        redisConfig.setPort(redisPort);
+        redisConfig.setDatabase(redisDatabase);
+//        redisConfig.setUsername(redisUsername);
+        redisConfig.setPassword(redisPassword);
+
+        // Create an instance of the Jedis Driver
+        JedisClientConfiguration jedisConfig = JedisClientConfiguration.builder().build();
+
+        // Create a factory for jedis connection
+        JedisConnectionFactory jedisFac = new JedisConnectionFactory(redisConfig, jedisConfig);
+        jedisFac.afterPropertiesSet();
+
+        // Create RedisTemplate
+        RedisTemplate<String, String> redisTemplate = new RedisTemplate();
+        redisTemplate.setConnectionFactory(jedisFac);
+
+        redisTemplate.setKeySerializer(new StringRedisSerializer());
+        redisTemplate.setValueSerializer(new StringRedisSerializer());
+
+        return redisTemplate;
     }
 }

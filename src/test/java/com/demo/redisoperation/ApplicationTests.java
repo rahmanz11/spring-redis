@@ -1,6 +1,5 @@
 package com.demo.redisoperation;
 
-import com.demo.redisoperation.model.Values;
 import com.demo.redisoperation.repository.RedisRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -9,6 +8,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import java.util.List;
 
 import static org.junit.Assert.assertTrue;
 
@@ -28,27 +29,23 @@ public class ApplicationTests {
         String value2 = "TISL";
         redisRepository.add(KEY, value1);
         redisRepository.add(KEY, value2);
-        Values values = redisRepository.get(KEY);
-        assertTrue(values.getValues().size() == 2);
+        List<String> values = redisRepository.get(KEY);
+        assertTrue(values.size() == 2);
     }
 
     @Test
     public void testGet() {
-        Values values = redisRepository.get(KEY);
-        assertTrue(values.getValues().contains("APPL"));
+        List<String> values = redisRepository.get(KEY);
+        assertTrue(values.contains("APPL"));
     }
 
     @Test
     public void testDeleteOneValue() {
-        redisRepository.deleteValueByKey(KEY, "APPL");
-        Values values = redisRepository.get(KEY);
-        assertTrue(values != null && values.getValues() != null && !values.getValues().contains("APPL"));
+        assertTrue(redisRepository.remove(KEY, "APPL"));
     }
 
     @Test
     public void testDeleteKey() {
-        redisRepository.deleteKey(KEY);
-        Values values = redisRepository.get(KEY);
-        assertTrue(values == null || values.getValues() == null);
+        assertTrue(redisRepository.delete(KEY));
     }
 }
