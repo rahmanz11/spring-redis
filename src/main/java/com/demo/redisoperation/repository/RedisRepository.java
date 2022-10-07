@@ -2,9 +2,7 @@ package com.demo.redisoperation.repository;
 
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
-import org.springframework.util.SerializationUtils;
 
-import java.io.Serializable;
 import java.util.*;
 
 @Repository
